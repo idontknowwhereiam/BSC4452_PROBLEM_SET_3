@@ -1,0 +1,344 @@
+QUESTION #1
+
+import csv
+
+# Step 1: Define the file path and initialize variables
+file_path = 'CO-OPS__8729108__wl.csv'
+
+highest_level = float('-inf')
+highest_date = None
+
+# Step 2: Open the CSV file and read the header
+try:
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)  # Skip the header row
+
+        # Check if the header has the expected columns
+        if len(header) < 3:
+            raise ValueError("Unexpected CSV format: Not enough columns in the header")
+
+        # Step 3: Iterate through each row to find the highest water level
+        for row in reader:
+            if len(row) < 3:
+                print(f"Skipping invalid row (not enough columns): {row}")
+                continue
+            
+            try:
+                date_time = row[0]  # Date and Time column
+                water_level = row[1].strip()
+
+                # Ensure water_level is not empty before converting
+                if water_level == '':
+                    print(f"Skipping invalid row (empty water level): {row}")
+                    continue
+
+                # Attempt to convert the water level in the specified column
+                water_level = float(water_level)
+
+                # Update the highest level if the current one is greater
+                if water_level > highest_level:
+                    highest_level = water_level
+                    highest_date = date_time
+            except ValueError:
+                # Skip rows with invalid data
+                print(f"Skipping invalid row (conversion error): {row}")
+                continue
+except FileNotFoundError:
+    print(f"Error: File not found at {file_path}")
+except ValueError as ve:
+    print(f"Error: {ve}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+# Step 4: Print the highest water level and the corresponding date and time
+if highest_date:
+    print(f"Highest water level: {highest_level} ft")
+    print(f"Date and Time: {highest_date}")
+else:
+    print("No valid data found in the file.")
+	
+	
+QUESTION #2
+
+import csv
+
+# Step 1: Define the file path and initialize variables
+file_path = 'CO-OPS__8729108__wl.csv'
+
+highest_level = float('-inf')
+lowest_level = float('inf')
+total_water_level = 0.0
+count = 0
+highest_date = None
+lowest_date = None
+
+# Step 2: Open the CSV file and read the header
+try:
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)  # Skip the header row
+
+        # Check if the header has the expected columns
+        if len(header) < 3:
+            raise ValueError("Unexpected CSV format: Not enough columns in the header")
+
+        # Step 3: Iterate through each row to find the highest, lowest, and average water levels
+        for row in reader:
+            if len(row) < 3:
+                print(f"Skipping invalid row (not enough columns): {row}")
+                continue
+            
+            try:
+                date_time = row[0]  # Date and Time column
+                water_level = row[1].strip()
+
+                # Ensure water_level is not empty before converting
+                if water_level == '':
+                    print(f"Skipping invalid row (empty water level): {row}")
+                    continue
+
+                # Attempt to convert the water level in the specified column
+                water_level = float(water_level)
+
+                # Update the highest level if the current one is greater
+                if water_level > highest_level:
+                    highest_level = water_level
+                    highest_date = date_time
+
+                # Update the lowest level if the current one is lower
+                if water_level < lowest_level:
+                    lowest_level = water_level
+                    lowest_date = date_time
+
+                # Add to total water level and increment count for average calculation
+                total_water_level += water_level
+                count += 1
+            except ValueError:
+                # Skip rows with invalid data
+                print(f"Skipping invalid row (conversion error): {row}")
+                continue
+except FileNotFoundError:
+    print(f"Error: File not found at {file_path}")
+except ValueError as ve:
+    print(f"Error: {ve}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+# Step 4: Print the highest, lowest, and average water levels and the corresponding dates and times
+if highest_date and lowest_date and count > 0:
+    average_level = total_water_level / count
+    print(f"Highest water level: {highest_level} ft")
+    print(f"Date and Time (Highest): {highest_date}")
+    print(f"Lowest water level: {lowest_level} ft")
+    print(f"Date and Time (Lowest): {lowest_date}")
+    print(f"Average water level: {average_level:.2f} ft")
+else:
+    print("No valid data found in the file.")
+	
+	
+QUESTION #3
+
+import csv
+
+# Step 1: Define the file path and initialize variables
+file_path = 'CO-OPS__8729108__wl.csv'
+
+highest_level = float('-inf')
+lowest_level = float('inf')
+total_water_level = 0.0
+count = 0
+highest_date = None
+lowest_date = None
+previous_water_level = None
+max_rise = float('-inf')
+max_rise_date = None
+
+# Step 2: Open the CSV file and read the header
+try:
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)  # Skip the header row
+
+        # Check if the header has the expected columns
+        if len(header) < 3:
+            raise ValueError("Unexpected CSV format: Not enough columns in the header")
+
+        # Step 3: Iterate through each row to find the highest, lowest, average, and fastest rise in water levels
+        for row in reader:
+            if len(row) < 3:
+                print(f"Skipping invalid row (not enough columns): {row}")
+                continue
+            
+            try:
+                date_time = row[0]  # Date and Time column
+                water_level = row[1].strip()
+
+                # Ensure water_level is not empty before converting
+                if water_level == '':
+                    print(f"Skipping invalid row (empty water level): {row}")
+                    continue
+
+                # Attempt to convert the water level in the specified column
+                water_level = float(water_level)
+
+                # Update the highest level if the current one is greater
+                if water_level > highest_level:
+                    highest_level = water_level
+                    highest_date = date_time
+
+                # Update the lowest level if the current one is lower
+                if water_level < lowest_level:
+                    lowest_level = water_level
+                    lowest_date = date_time
+
+                # Calculate the rise in water level from the previous measurement
+                if previous_water_level is not None:
+                    rise = water_level - previous_water_level
+                    if rise > max_rise:
+                        max_rise = rise
+                        max_rise_date = date_time
+
+                # Update previous_water_level for the next iteration
+                previous_water_level = water_level
+
+                # Add to total water level and increment count for average calculation
+                total_water_level += water_level
+                count += 1
+            except ValueError:
+                # Skip rows with invalid data
+                print(f"Skipping invalid row (conversion error): {row}")
+                continue
+except FileNotFoundError:
+    print(f"Error: File not found at {file_path}")
+except ValueError as ve:
+    print(f"Error: {ve}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+# Step 4: Print the highest, lowest, and average water levels, the corresponding dates and times, and the fastest rise
+if highest_date and lowest_date and count > 0:
+    average_level = total_water_level / count
+    print(f"Highest water level: {highest_level} ft")
+    print(f"Date and Time (Highest): {highest_date}")
+    print(f"Lowest water level: {lowest_level} ft")
+    print(f"Date and Time (Lowest): {lowest_date}")
+    print(f"Average water level: {average_level:.2f} ft")
+    if max_rise_date:
+        print(f"Fastest rise in water level: {max_rise:.3f} ft in 6 minutes")
+        print(f"Date and Time (Fastest Rise): {max_rise_date}")
+else:
+    print("No valid data found in the file.")
+	
+	
+QUESTION #4
+
+import csv
+from datetime import datetime, timedelta
+
+# Step 1: Define the file path and initialize variables
+file_path = 'CO-OPS__8729108__wl.csv'
+
+highest_level = float('-inf')
+lowest_level = float('inf')
+total_water_level = 0.0
+count = 0
+highest_date = None
+lowest_date = None
+previous_water_level = None
+max_rise = float('-inf')
+max_rise_date = None
+previous_date_time = None
+
+# Step 2: Open the CSV file and read the header
+try:
+    with open(file_path, 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        header = next(reader)  # Skip the header row
+
+        # Check if the header has the expected columns
+        if len(header) < 3:
+            raise ValueError("Unexpected CSV format: Not enough columns in the header")
+
+        # Step 3: Iterate through each row to find the highest, lowest, average, and fastest rise in water levels
+        for row in reader:
+            if len(row) < 3:
+                print(f"Skipping invalid row (not enough columns): {row}")
+                continue
+            
+            try:
+                date_time = row[0]  # Date and Time column
+                water_level = row[1].strip()
+
+                # Ensure water_level is not empty before converting
+                if water_level == '':
+                    print(f"Skipping invalid row (empty water level): {row}")
+                    continue
+
+                # Attempt to convert the water level in the specified column
+                water_level = float(water_level)
+
+                # Update the highest level if the current one is greater
+                if water_level > highest_level:
+                    highest_level = water_level
+                    highest_date = date_time
+
+                # Update the lowest level if the current one is lower
+                if water_level < lowest_level:
+                    lowest_level = water_level
+                    lowest_date = date_time
+
+                # Calculate the rise in water level from the previous measurement
+                if previous_water_level is not None:
+                    rise = water_level - previous_water_level
+                    if rise > max_rise:
+                        max_rise = rise
+                        max_rise_date = date_time
+
+                    # Step 4: Check for live warnings
+                    if rise > 0.25:
+                        print(f"Warning: Rapid rise in water level of {rise:.3f} ft at {date_time}")
+                
+                if water_level > 5.0:
+                    print(f"Warning: High water level of {water_level:.3f} ft at {date_time}")
+
+                # Check for missing data points
+                if previous_date_time is not None:
+                    # Assuming data points are at 6-minute intervals
+                    prev_dt = datetime.strptime(previous_date_time, "%Y-%m-%d %H:%M")
+                    curr_dt = datetime.strptime(date_time, "%Y-%m-%d %H:%M")
+                    expected_dt = prev_dt + timedelta(minutes=6)
+                    if curr_dt != expected_dt:
+                        print(f"Warning: Missing data point between {previous_date_time} and {date_time}")
+
+                # Update previous_water_level and previous_date_time for the next iteration
+                previous_water_level = water_level
+                previous_date_time = date_time
+
+                # Add to total water level and increment count for average calculation
+                total_water_level += water_level
+                count += 1
+            except ValueError:
+                # Skip rows with invalid data
+                print(f"Skipping invalid row (conversion error): {row}")
+                continue
+except FileNotFoundError:
+    print(f"Error: File not found at {file_path}")
+except ValueError as ve:
+    print(f"Error: {ve}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+
+# Step 5: Print the highest, lowest, and average water levels, the corresponding dates and times, and the fastest rise
+if highest_date and lowest_date and count > 0:
+    average_level = total_water_level / count
+    print(f"Highest water level: {highest_level} ft")
+    print(f"Date and Time (Highest): {highest_date}")
+    print(f"Lowest water level: {lowest_level} ft")
+    print(f"Date and Time (Lowest): {lowest_date}")
+    print(f"Average water level: {average_level:.2f} ft")
+    if max_rise_date:
+        print(f"Fastest rise in water level: {max_rise:.3f} ft in 6 minutes")
+        print(f"Date and Time (Fastest Rise): {max_rise_date}")
+else:
+    print("No valid data found in the file.")
